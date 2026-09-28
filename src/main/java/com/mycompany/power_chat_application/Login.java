@@ -60,6 +60,7 @@ public class Login {
         if (!checkCellPhoneNumber(cellPhoneNumber)) {
             return "Cell phone number incorrectly formatted or does not contain international code.";
         }
+           
 
         User newUser = new User(username, password, cellPhoneNumber, firstName, lastName);
         registeredUsers.put(username, newUser);
@@ -75,6 +76,18 @@ public class Login {
      }
      User user = registeredUsers.get(username);
      return user != null && user.getPassword().equals(password);
+ }
+ 
+ /**
+  * Returning the messaging for a success of failed login
+  */
+ public String returnLoginStatus(String username, String password){
+     if (loginUser(username, password)) {
+         User user = registeredUsers.get(username);
+         return "Welcome " + user.getFirstName() + ", " + user.getLastName() + "it is great to see you.";
+         
+     }
+     return "Username or password incorrect, please try again.";
  }
     private boolean checkCellPhoneNumber(String cellPhoneNumber) {
         throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
