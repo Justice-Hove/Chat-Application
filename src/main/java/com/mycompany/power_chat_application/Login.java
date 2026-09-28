@@ -15,7 +15,7 @@ public class Login {
             Pattern.compile("^(?=.*[A-Z])(?=.*\\d)(?=.*[^A-Za-z0-9]).{8,}$");
     
       /*
-     * Makes sure that South African mobile number in international format: "+27" followed  by 9 digits.
+     * Making sure that South African mobile number in international format: "+27" followed  by 9 digits.
      * Reference: <(Rios, 2026)>
      */
        private static final Pattern CELLPHONE_PATTERN = Pattern.compile("^\\+27\\d{9}$");
@@ -32,7 +32,7 @@ public class Login {
         return username.length() <= 5 && username.contains("_");
     }
  /**
-     * Ensures that a password is at least eight characters long and
+     * Ensuring that a password is at least eight characters long and
      * contains a capital letter, a number and a special character.
      */
     public boolean checkPasswordComplexity(String password) {
@@ -43,7 +43,7 @@ public class Login {
     }
 
     /**
-     * Ensures the cell phone number contains the international country
+     * Ensuring the cell phone number contains the international country
      * code (+27) followed by the number, in the expected length.
      */
     public boolean checkCellPhoneNumber(String cellPhoneNumber) {
