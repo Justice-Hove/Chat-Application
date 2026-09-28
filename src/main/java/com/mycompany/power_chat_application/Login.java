@@ -3,18 +3,28 @@
  * Click nbfs://nbhost/SystemFileSystem/Templates/Classes/Class.java to edit this template
  */
 package com.mycompany.power_chat_application;
+
+import java.util.HashMap;
+import java.util.Map;
 import java.util.regex.Pattern;
+
+
 public class Login {
    
    private static final Pattern PASSWORD_PATTERN =
             Pattern.compile("^(?=.*[A-Z])(?=.*\\d)(?=.*[^A-Za-z0-9]).{8,}$");
     
-    
+      /*
+     * Makes sure that South African mobile number in international format: "+27" followed  by 9 digits.
+     * Reference: <(Rios, 2026)>
+     */
+       private static final Pattern CELLPHONE_PATTERN = Pattern.compile("^\\+27\\d{9}$");
+
+    private final Map<String, User> registeredUsers = new HashMap<>();
     /**
  *
  * this ensures that the username contains an underscore and is <= 5 characters
  */
-
     public boolean checkUserNsme(String username) {
         if (username == null){
             return false;
@@ -30,5 +40,39 @@ public class Login {
             return false;
         }
         return PASSWORD_PATTERN.matcher(password).matches();
+    }
+
+
+/** Validation, and, if valid, should register as new user
+ * 
+ */
+
+ public String registerUser(String username, String password, String cellPhoneNumber,
+                               String firstName, String lastName) {
+        if (!checkUserName(username)) {
+            return "Username is not correctly formatted; please ensure that your username "
+                    + "contains an underscore and is no more than five characters in length.";
+        }
+        if (!checkPasswordComplexity(password)) {
+            return "Password is not correctly formatted; please ensure that the password "
+                    + "contains at least eight characters, a capital letter, a number, and a special character.";
+        }
+        if (!checkCellPhoneNumber(cellPhoneNumber)) {
+            return "Cell phone number incorrectly formatted or does not contain international code.";
+        }
+
+        User newUser = new User(username, password, cellPhoneNumber, firstName, lastName);
+        registeredUsers.put(username, newUser);
+
+        return "Username successfully captured. Password successfully captured. "
+                + "Cell phone number successfully added. Registration successful!";
+    }
+
+    private boolean checkCellPhoneNumber(String cellPhoneNumber) {
+        throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
+    }
+
+    private boolean checkUserName(String username) {
+        throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
     }
 }
