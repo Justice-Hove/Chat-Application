@@ -4,10 +4,16 @@
  */
 package com.mycompany.power_chat_application;
 
-/**
- *
- * @author User
- */
 public class Login {
-    
+    /**
+ *
+ * this ensures that the username contains an underscore and is <= 5 characters
+ */
+
+    public boolean checkUserNsme(String username) {
+        if (username == null){
+            return false;
+        }
+        return username.length()<= 5 && username.contains("_");
+    }
 }
