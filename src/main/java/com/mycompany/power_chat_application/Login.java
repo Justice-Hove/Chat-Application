@@ -25,11 +25,11 @@ public class Login {
  *
  * this ensures that the username contains an underscore and is <= 5 characters
  */
-    public boolean checkUserNsme(String username) {
-        if (username == null){
+     public boolean checkUserName(String username) {
+        if (username == null) {
             return false;
         }
-        return username.length()<= 5 && username.contains("_");
+        return username.length() <= 5 && username.contains("_");
     }
  /**
      * Ensures that a password is at least eight characters long and
@@ -40,6 +40,17 @@ public class Login {
             return false;
         }
         return PASSWORD_PATTERN.matcher(password).matches();
+    }
+
+    /**
+     * Ensures the cell phone number contains the international country
+     * code (+27) followed by the number, in the expected length.
+     */
+    public boolean checkCellPhoneNumber(String cellPhoneNumber) {
+        if (cellPhoneNumber == null) {
+            return false;
+        }
+        return CELLPHONE_PATTERN.matcher(cellPhoneNumber).matches();
     }
 
 
@@ -84,16 +95,9 @@ public class Login {
  public String returnLoginStatus(String username, String password){
      if (loginUser(username, password)) {
          User user = registeredUsers.get(username);
-         return "Welcome " + user.getFirstName() + ", " + user.getLastName() + "it is great to see you.";
+         return "Welcome " + user.getFirstName() + ", " + user.getLastName() + " it is great to see you.";
          
      }
      return "Username or password incorrect, please try again.";
  }
-    private boolean checkCellPhoneNumber(String cellPhoneNumber) {
-        throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
-    }
-
-    private boolean checkUserName(String username) {
-        throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
-    }
 }
