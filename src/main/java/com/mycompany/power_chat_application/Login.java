@@ -67,7 +67,15 @@ public class Login {
         return "Username successfully captured. Password successfully captured. "
                 + "Cell phone number successfully added. Registration successful!";
     }
-
+ /* verifying that the provided username and password are matching the previous registered user
+*/
+ public boolean loginUser(String username, String password){
+     if (username == null || password == null){
+         return false;
+     }
+     User user = registeredUsers.get(username);
+     return user != null && user.getPassword().equals(password);
+ }
     private boolean checkCellPhoneNumber(String cellPhoneNumber) {
         throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
     }
