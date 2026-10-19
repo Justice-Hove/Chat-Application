@@ -131,9 +131,42 @@ public class Message {
     public int getMessageNumber() { return messageNumber; }
     public String getMessageHash() { return messageHash; }
 
-    private void storeMessage() {
-        throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
+    
+    
+    /* this stores the message in JSON format in a file named store_messages.json.
+    
+    */
+   public void storeMessage() {
+    try (java.io.FileWriter writer =
+            new java.io.FileWriter("stored_messages.json", true)) {
+        writer.write(toJson());
+        writer.write(System.lineSeparator());
+    } catch (java.io.IOException e) {
+        System.out.println("Could not store message: " + e.getMessage());
     }
+}
+/*converting the message details into a JSON string
+   
+   */
+private String toJson() {
+    return "{\"messageId\":\"" + escape(msgId) + "\","
+            + "\"messageNumber\":" + messageNumber + ","
+            + "\"recipientCell\":\"" + escape(recipientNumber) + "\","
+            + "\"message\":\"" + escape(body) + "\","
+            + "\"messageHash\":\"" + escape(messageHash) + "\"}";
+}
+/*escapes special characters so that strings will b4e safely allowed in JSON output
+
+*/
+private static String escape(String s) {
+    if (s == null) {
+        return "";
+    }
+    return s.replace("\\", "\\\\")
+            .replace("\"", "\\\"")
+            .replace("\n", "\\n")
+            .replace("\r", "\\r");
+}
 }
 
 
