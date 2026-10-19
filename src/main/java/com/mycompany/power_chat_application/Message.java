@@ -167,6 +167,42 @@ private static String escape(String s) {
             .replace("\n", "\\n")
             .replace("\r", "\\r");
 }
+/*
+ * Returns all messages sen8t while the program is running,
+ * displaying the Message ID, Message Hashh, Recipient,
+ * and Message in that order.
+ */
+public String printMessages() {
+    StringBuilder sb = new StringBuilder();
+
+    
+    
+    for (Message m : sentHistory) {
+        sb.append("Message ID: ").append(m.msgId)
+                .append(", Message Hash: ").append(m.messageHash)
+                .append(", Recipient: ").append(m.recipientNumber)
+                .append(", Message: ").append(m.body)
+                .append(System.lineSeparator());
+    }
+
+    return sb.toString();
+}
+
+
+/* Returns the total number of messages sent so far. */
+public int returnTotalMessagesSent() {
+    return sendCount;
+}
+
+
+/*
+ * Resets the message history and message counter.
+ */
+public static void resetMessageLog() {
+    sentHistory.clear();
+    sendCount = 0;
+    messageSequence = 0;
+}
 }
 
 
