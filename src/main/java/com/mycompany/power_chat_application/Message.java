@@ -18,14 +18,22 @@ public class Message {
     private static final Pattern RECIPIENT_FORMAT_RULE = Pattern.compile("^\\+27\\d{9}$");
     private static final java.util.Random ID_GENERATOR = new java.util.Random();
     
+     private static int messageSequence = 0;
+    
     private final String msgId;
     private final String recipientNumber;
     private final String body;
 
+    
+     private final int messageNumber;
+    private String messageHash;
+    
     public Message(String messageId, String recipientCell, String messageText) {
         this.msgId = messageId;
         this.recipientNumber = recipientCell;
         this.body = messageText;
+        this.messageNumber = messageSequence;   
+        messageSequence++;  
     }
     
        /* Generating a random 10-digit message ID. */
@@ -51,7 +59,7 @@ public class Message {
         return "Message exceeds 250 characters by " + overLimitBy + "; please reduce the size.";
     }
 
-    /* Returns a message confirming that the message ID has been created. */
+    /* A return message comes confirming that the message ID has been created. */
     public String getMessageIdStatus() {
         return "Message ID generated: " + msgId;
     }
@@ -75,10 +83,30 @@ public class Message {
         return cell != null && RECIPIENT_FORMAT_RULE.matcher(cell).matches();
     }
 
-    
+     /*
+     * Creating and returning Message Hash: the first two digits of the
+     * message ID, a colon, the message number, a colon, and the first and
+     * last words of the message (punctuation stripped).
+     */
+    public String createMessageHash() {
+        String idPrefix = msgId.length() >= 2 ? msgId.substring(0, 2) : msgId;
+        String[] words = body.trim().split("\\s+");
+        String firstWord = stripPunctuation(words[0]);
+        String lastWord = stripPunctuation(words[words.length - 1]);
+
+        this.messageHash = (idPrefix + ":" + messageNumber + ":" + firstWord + lastWord).toUpperCase();
+        return this.messageHash;
+    }
+
+    private String stripPunctuation(String word) {
+        return word.replaceAll("[^a-zA-Z0-9]", "");
+    }
     
     public String getMessageId() { return msgId; }
     public String getRecipientCell() { return recipientNumber; }
     public String getMessageText() { return body; }
+    public int getMessageNumber() { return messageNumber; }
+    public String getMessageHash() { return messageHash; }
 }
+
 
