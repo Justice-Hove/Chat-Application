@@ -16,7 +16,8 @@ public class Message {
     international-format approach as I used in the Part 1's Login.checkCellPhoneNumber(). (Rios, 2026)
      */
     private static final Pattern RECIPIENT_FORMAT_RULE = Pattern.compile("^\\+27\\d{9}$");
-
+    private static final java.util.Random ID_GENERATOR = new java.util.Random();
+    
     private final String msgId;
     private final String recipientNumber;
     private final String body;
@@ -26,13 +27,36 @@ public class Message {
         this.recipientNumber = recipientCell;
         this.body = messageText;
     }
+    
+       /* Generating a random 10-digit message ID. */
+    public static String generateMessageId() {
+        long generatedId = (long) (ID_GENERATOR.nextDouble() * 10_000_000_000L);
+        return String.format("%010d", generatedId);
+    }
 
-    /** this ensures that the message ID is not more than ten characters. */
+    /* this ensures that the message ID is not more than ten characters. */
     public boolean checkMessageID(String id) {
         return id != null && id.length() <= 10;
     }
 
-    /**
+     /*
+     * Ensuring the message does not over exceed 250 characters when returning the success of failure of message.
+     */
+    public String checkMessageLength(String message) {
+        if (message != null && message.length() <= 250) {
+            return "Message ready to send.";
+        }
+        int length = message == null ? 0 : message.length();
+        int overLimitBy = length - 250;
+        return "Message exceeds 250 characters by " + overLimitBy + "; please reduce the size.";
+    }
+
+    /* Returns a message confirming that the message ID has been created. */
+    public String getMessageIdStatus() {
+        return "Message ID generated: " + msgId;
+    }
+    
+    /*
      * this ensures the recipient cell number is no more than ten characters long
      and starts with an international code, returning the appropriate
      * user message.
@@ -57,3 +81,4 @@ public class Message {
     public String getRecipientCell() { return recipientNumber; }
     public String getMessageText() { return body; }
 }
+
