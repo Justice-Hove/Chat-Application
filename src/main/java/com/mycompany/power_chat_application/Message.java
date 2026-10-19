@@ -20,6 +20,9 @@ public class Message {
     
      private static int messageSequence = 0;
     
+         private static final java.util.List<Message> sentHistory = new java.util.ArrayList<>();
+    private static int sendCount = 0;
+     
     private final String msgId;
     private final String recipientNumber;
     private final String body;
@@ -62,6 +65,26 @@ public class Message {
     /* A return message comes confirming that the message ID has been created. */
     public String getMessageIdStatus() {
         return "Message ID generated: " + msgId;
+    }
+    
+     /*
+     * Lets the user choose to send, disregard, or store the message.
+     * choice: 1 = Send, 2 = Disregard, 3 = Store.
+     */
+    public String sentMessage(int userSelection) {
+        switch (userSelection) {
+            case 1:
+                sendCount++;
+                sentHistory.add(this);
+                return "Message successfully sent.";
+            case 2:
+                return "Press 0 to delete the message.";
+            case 3:
+                storeMessage();
+                return "Message successfully stored.";
+            default:
+                return "Invalid option.";
+        }
     }
     
     /*
@@ -107,6 +130,10 @@ public class Message {
     public String getMessageText() { return body; }
     public int getMessageNumber() { return messageNumber; }
     public String getMessageHash() { return messageHash; }
+
+    private void storeMessage() {
+        throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
+    }
 }
 
 
