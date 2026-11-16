@@ -11,14 +11,6 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
-/**
- * Part 3: holds the message arrays and every "Stored Messages" feature.
- *
- * The first six lists are PARALLEL arrays: index i in each of them describes
- * the same message, so a search in one list gives the matching entry in the
- * others. sentMessages, disregardedMessages and storedMessages then hold the
- * message text for each flag.
- */
 public class MessageStore {
 
     public static final String DEFAULT_FILE = "stored_messages.json";
@@ -83,5 +75,71 @@ public class MessageStore {
     public List<String> getMessageHashes() { return new ArrayList<>(messageHashes); }
     public List<String> getMessageIds() { return new ArrayList<>(messageIds); }
 
-    // Commits 3 to 7 add their methods here, above the final closing brace
+
+    public int loadStoredMessages() {
+        int loaded = 0;
+        try (BufferedReader reader = new BufferedReader(new FileReader(storageFile))) {
+            String line;
+            while ((line = reader.readLine()) != null) {
+                String json = cleanJsonLine(line);
+                if (!json.startsWith("{")) {
+                    continue;
+                }
+                String id = readJsonString(json, "messageId");
+                if (id.isEmpty() || messageIds.contains(id)) {
+                    continue;
+                }
+                String sender = readJsonString(json, "sender");
+                addEntry(id,
+                        readJsonString(json, "messageHash"),
+                        sender.isEmpty() ? "Unknown" : sender,
+                        readJsonString(json, "recipientCell"),
+                        readJsonString(json, "message"),
+                        FLAG_STORED);
+                loaded++;
+            }
+        } catch (IOException e) {
+            // no file yet means nothing has been stored, so there is nothing to load
+        }
+        return loaded;
+    }
+
+    /** Removes the brackets and commas a JSON array would put around a line. */
+    private String cleanJsonLine(String line) {
+        String cleaned = line.trim();
+        if (cleaned.startsWith("[")) {
+            cleaned = cleaned.substring(1).trim();
+        }
+        if (cleaned.endsWith("]") || cleaned.endsWith(",")) {
+            cleaned = cleaned.substring(0, cleaned.length() - 1).trim();
+        }
+        return cleaned;
+    }
+
+    /** Reads the text value of one key from a single-line JSON object, undoing the escapes. */
+    private String readJsonString(String json, String key) {
+        String marker = "\"" + key + "\":\"";
+        int start = json.indexOf(marker);
+        if (start < 0) {
+            return "";
+        }
+        StringBuilder value = new StringBuilder();
+        for (int i = start + marker.length(); i < json.length(); i++) {
+            char c = json.charAt(i);
+            if (c == '\\' && i + 1 < json.length()) {
+                char next = json.charAt(++i);
+                switch (next) {
+                    case 'n': value.append('\n'); break;
+                    case 'r': value.append('\r'); break;
+                    case 't': value.append('\t'); break;
+                    default: value.append(next);
+                }
+            } else if (c == '"') {
+                break;
+            } else {
+                value.append(c);
+            }
+        }
+        return value.toString();
+    }
 }
