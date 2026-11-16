@@ -168,5 +168,9 @@ public String printMessages() {
 
     return report.toString().trim();
 }
+public static void resetMessageLog() {
+    totalMessagesSent = 0;
+    sentMessages.clear();
+}
 }
 
