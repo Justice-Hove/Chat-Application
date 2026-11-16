@@ -22,7 +22,8 @@ public static final int MAX_MESSAGE_LENGTH = 250;
     private final String recipientNumber;
     private final String body;
     private String sender = "Unknown";
-
+    private String messageHash;
+    
     public Message(String messageId, String recipientCell, String messageText) {
         this.msgId = messageId;
         this.recipientNumber = recipientCell;
@@ -98,6 +99,33 @@ static String escape(String s) {
             .replace("\n", "\\n")
             .replace("\r", "\\r");
 }
+public String createMessageHash() {
+    try {
+        java.security.MessageDigest digest =
+                java.security.MessageDigest.getInstance("SHA-256");
 
+        String data = msgId + recipientNumber + body;
+
+        byte[] hashBytes = digest.digest(
+                data.getBytes(java.nio.charset.StandardCharsets.UTF_8)
+        );
+
+        StringBuilder hexString = new StringBuilder();
+
+        for (byte b : hashBytes) {
+            hexString.append(String.format("%02x", b));
+        }
+
+        messageHash = hexString.toString();
+        return messageHash;
+
+    } catch (java.security.NoSuchAlgorithmException e) {
+        throw new IllegalStateException(e);
+    }
+}
+
+public String getMessageHash() {
+    return messageHash;
+}
 }
 
