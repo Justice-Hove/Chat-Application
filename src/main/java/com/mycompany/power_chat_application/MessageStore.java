@@ -142,4 +142,36 @@ public class MessageStore {
         }
         return value.toString();
     }
+    /** Menu option a: the sender and recipient of every stored message. */
+public String displaySendersAndRecipients() {
+    StringBuilder output = new StringBuilder();
+
+    for (int i = 0; i < flags.size(); i++) {
+        if (FLAG_STORED.equals(flags.get(i))) {
+            output.append("Sender: ").append(senders.get(i))
+                    .append(", Recipient: ").append(recipients.get(i))
+                    .append(System.lineSeparator());
+        }
+    }
+
+    return output.length() == 0
+            ? "No stored messages."
+            : output.toString().trim();
+}
+/** Menu option b: the longest stored message. */
+public String getLongestStoredMessage() {
+    if (storedMessages.isEmpty()) {
+        return "No stored messages.";
+    }
+
+    String longest = storedMessages.get(0);
+
+    for (String candidate : storedMessages) {
+        if (candidate.length() > longest.length()) {
+            longest = candidate;
+        }
+    }
+
+    return longest;
+}
 }
