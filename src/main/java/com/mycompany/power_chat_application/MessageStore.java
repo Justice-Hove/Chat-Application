@@ -174,4 +174,118 @@ public String getLongestStoredMessage() {
 
     return longest;
 }
+/**option c (used by the unit test): the message text that belongs to the ID. */
+public String searchByMessageId(String id) {
+    int position = messageIds.indexOf(id);
+
+    if (position < 0) {
+        return "Message ID not found.";
+    }
+
+    return messageTexts.get(position);
+}
+public String describeMessageById(String id) {
+    int position = messageIds.indexOf(id);
+
+    if (position == -1) {
+        return "Message ID not found.";
+    }
+
+    return "Recipient: " + recipients.get(position)
+            + ", Message: " + messageTexts.get(position);
+}
+
+
+/** Menu option d: all messages sent or stored for one recipient. */
+public List<String> searchByRecipient(String recipient) {
+    List<String> found = new ArrayList<>();
+
+    for (int i = 0; i < recipients.size(); i++) {
+        boolean sameRecipient = recipients.get(i).equals(recipient);
+        boolean notDisregarded = !FLAG_DISREGARD.equals(flags.get(i));
+
+        if (sameRecipient && notDisregarded) {
+            found.add(messageTexts.get(i));
+        }
+    }
+
+    return found;
+}
+/** Menu option e: removes the message from every array and, if it was stored, from the JSON file. */
+public String deleteByHash(String hash) {
+    int position = messageHashes.indexOf(hash);
+
+    if (position < 0) {
+        return "Message hash not found.";
+    }
+
+    String text = messageTexts.get(position);
+    String flag = flags.get(position);
+
+    messageIds.remove(position);
+    messageHashes.remove(position);
+    senders.remove(position);
+    recipients.remove(position);
+    messageTexts.remove(position);
+    flags.remove(position);
+
+    if (FLAG_SENT.equals(flag)) {
+        sentMessages.remove(text);
+    } else if (FLAG_DISREGARD.equals(flag)) {
+        disregardedMessages.remove(text);
+    } else if (FLAG_STORED.equals(flag)) {
+        storedMessages.remove(text);
+        rewriteStorageFile();
+    }
+
+    return "Message: \"" + text + "\" successfully deleted.";
+}
+/** Rewrites the JSON file so it only holds the messages that are still stored. */
+private void rewriteStorageFile() {
+    try (FileWriter writer = new FileWriter(storageFile, false)) {
+        for (int i = 0; i < flags.size(); i++) {
+            if (FLAG_STORED.equals(flags.get(i))) {
+                writer.write("{\"messageId\":\"" + Message.escape(messageIds.get(i)) + "\","
+                        + "\"sender\":\"" + Message.escape(senders.get(i)) + "\","
+                        + "\"recipientCell\":\"" + Message.escape(recipients.get(i)) + "\","
+                        + "\"message\":\"" + Message.escape(messageTexts.get(i)) + "\","
+                        + "\"messageHash\":\"" + Message.escape(messageHashes.get(i)) + "\"}");
+                writer.write(System.lineSeparator());
+            }
+        }
+    } catch (IOException e) {
+        System.out.println("Could not update the stored messages file: " + e.getMessage());
+    }
+}
+
+/** Report of every sent message: Message Hash, Recipient and Message. */
+public String getSentMessagesReport() {
+    StringBuilder report = new StringBuilder();
+    for (int i = 0; i < flags.size(); i++) {
+        if (FLAG_SENT.equals(flags.get(i))) {
+            report.append("Message Hash: ").append(messageHashes.get(i))
+                    .append(", Recipient: ").append(recipients.get(i))
+                    .append(", Message: ").append(messageTexts.get(i))
+                    .append(System.lineSeparator());
+        }
+    }
+    return report.length() == 0 ? "No sent messages." : report.toString().trim();
+}
+
+/** Menu option f: the full details of every stored message. */
+public String getStoredMessagesReport() {
+    StringBuilder report = new StringBuilder();
+    for (int i = 0; i < flags.size(); i++) {
+        if (FLAG_STORED.equals(flags.get(i))) {
+            report.append("Message ID: ").append(messageIds.get(i))
+                    .append(", Message Hash: ").append(messageHashes.get(i))
+                    .append(", Sender: ").append(senders.get(i))
+                    .append(", Recipient: ").append(recipients.get(i))
+                    .append(", Message: ").append(messageTexts.get(i))
+                    .append(System.lineSeparator());
+        }
+    }
+    return report.length() == 0 ? "No stored messages." : report.toString().trim();
+}
+
 }

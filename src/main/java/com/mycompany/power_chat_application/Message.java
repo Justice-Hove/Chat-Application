@@ -23,12 +23,20 @@ public static final int MAX_MESSAGE_LENGTH = 250;
     private final String body;
     private String sender = "Unknown";
     private String messageHash;
+    private static int totalMessagesSent = 0;
+    private static final java.util.ArrayList<String> sentMessages = new java.util.ArrayList<>();
     
     public Message(String messageId, String recipientCell, String messageText) {
         this.msgId = messageId;
         this.recipientNumber = recipientCell;
         this.body = messageText;
     }
+    
+    public Message(String recipientCell, String messageText) {
+    this.msgId = generateMessageId();
+    this.recipientNumber = recipientCell;
+    this.body = messageText;
+}
     
        /* Generating a random 10-digit message ID. */
     public static String generateMessageId() {
@@ -126,6 +134,39 @@ public String createMessageHash() {
 
 public String getMessageHash() {
     return messageHash;
+}
+public String sentMessage(int choice) {
+    switch (choice) {
+        case 1:
+            totalMessagesSent++;
+            sentMessages.add(body);
+            return "Message successfully sent.";
+        case 2:
+            return "Message disregarded.";
+        case 3:
+            return "Message successfully stored.";
+        default:
+            return "Invalid option.";
+    }
+    
+}
+public int returnTotalMessagesSent() {
+    return totalMessagesSent;
+}
+public String printMessages() {
+    if (sentMessages.isEmpty()) {
+        return "No messages have been sent.";
+    }
+
+    StringBuilder report = new StringBuilder();
+
+    for (int i = 0; i < sentMessages.size(); i++) {
+        report.append("Message ").append(i + 1)
+                .append(": ").append(sentMessages.get(i))
+                .append(System.lineSeparator());
+    }
+
+    return report.toString().trim();
 }
 }
 
