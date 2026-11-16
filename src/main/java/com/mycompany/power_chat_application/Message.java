@@ -9,7 +9,7 @@ import java.util.regex.Pattern;
 
 
 public class Message {
-
+public static final int MAX_MESSAGE_LENGTH = 250;
     
     /*
      * Recipient cell number check, reusing the same South African 
@@ -21,6 +21,7 @@ public class Message {
     private final String msgId;
     private final String recipientNumber;
     private final String body;
+    private String sender = "Unknown";
 
     public Message(String messageId, String recipientCell, String messageText) {
         this.msgId = messageId;
@@ -42,14 +43,14 @@ public class Message {
      /*
      * Ensuring the message does not over exceed 250 characters when returning the success of failure of message.
      */
-    public String checkMessageLength(String message) {
-        if (message != null && message.length() <= 250) {
-            return "Message ready to send.";
-        }
-        int length = message == null ? 0 : message.length();
-        int overLimitBy = length - 250;
-        return "Message exceeds 250 characters by " + overLimitBy + "; please reduce the size.";
+ public String checkMessageLength(String message) {
+    if (message != null && message.length() <= MAX_MESSAGE_LENGTH) {
+        return "Message ready to send.";
     }
+    int length = message == null ? 0 : message.length();
+    int overLimitBy = length - MAX_MESSAGE_LENGTH;
+    return "Message exceeds 250 characters by " + overLimitBy + "; please reduce the size.";
+}
 
     /* Returns a message confirming that the message ID has been created. */
     public String getMessageIdStatus() {
@@ -71,14 +72,32 @@ public class Message {
     }
 
     
-    private boolean isValidRecipientCell(String cell) {
-        return cell != null && RECIPIENT_FORMAT_RULE.matcher(cell).matches();
-    }
-
+public static boolean isValidRecipientCell(String cell) {
+    return cell != null && RECIPIENT_FORMAT_RULE.matcher(cell).matches();
+}
     
     
     public String getMessageId() { return msgId; }
     public String getRecipientCell() { return recipientNumber; }
     public String getMessageText() { return body; }
+    
+    public String getSender() {
+    return sender;
+}
+
+public void setSender(String sender) {
+    this.sender = sender;
+}
+static String escape(String s) {
+    if (s == null) {
+        return "";
+    }
+
+    return s.replace("\\", "\\\\")
+            .replace("\"", "\\\"")
+            .replace("\n", "\\n")
+            .replace("\r", "\\r");
+}
+
 }
 
